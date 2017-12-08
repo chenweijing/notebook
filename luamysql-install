@@ -1,0 +1,18 @@
+首先安装：luarocks 这是lua的工具集
+http://www.runoob.com/lua/lua-database-access.html
+
+在windows下安装，会碰到这个问题：
+Error: Could not find header file for MYSQL
+  No file mysql.h in c:/external/include
+You may have to install MYSQL in your system and/or pass MYSQL_DIR or MYSQL_INCDIR to the luarocks comm
+Example: luarocks install luasql-mysql MYSQL_DIR=/usr/local
+
+解决：https://github.com/keplerproject/luasql/issues/26
+Do you have a C compiler (such as Visual Studio) setup in your environment? You will need it to compile LuaSQL.
+
+Locate where in your system you have the files mysql.h and mysqlclient.dll. Suppose they are in c:\foo\ and c:\bar\ respectively. Then run luarocks like this:
+
+luarocks install luasql-mysql MYSQL_INCDIR=c:\foo MYSQL_LIBDIR=c:\bar
+
+我的环境：
+luarocks install luasql-mysql MYSQL_INCDIR=C:\Program Files\MySQL\MySQL Connector C 6.1\include MYSQL_LIBDIR=C:\Program Files\MySQL\MySQL Connector C 6.1\lib
