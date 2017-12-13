@@ -1,0 +1,48 @@
+带参数调试：
+cgdb --args ./darknet cfg/yolo.cfg yolo.weights data/dog.jpg
+
+2. 退出函数 fin
+
+3. GDB源代码查找路径，参考：https://www.cnblogs.com/rickyk/p/4184860.html
+
+GDB源代码查找路径
+
+在gdb程序的时候，有时候会发现源代码文件找不到，对于那些带调试信息的系统库或者第三方库，很多时候当你真正想gdb去追他源代码的时候你会发现gdb根本找不到这些源代码路径。这个时候有两种选择：
+
+【1】如果gdb这个时候告诉你找不到这个带调试信息库的源文件路径，此时给出的路径地址是绝对路径，比如
+
+/home/rickyk/qt-4.8.6/src/corelib/tools/qstring.cpp: 没有那个文件或目录
+这种提示的，你就应该用gdb提供的
+
+set substitute-path
+这个其实很好理解，就是替换规则，你如果想查看当前的替换规则，你可以
+
+show substitute-path
+比如此时我们需要qstring.cpp这个文件，但由于某种原因，目前我们不能在/home/rickyk/qt-4.8.6/src/corelib/tools/qstring.cpp中找到，但我们确可以在/home/rickyk/qt-everywhere-opensource-src-4.8.6/src/corelib/tools/qstring.cpp中找到，我们就
+
+set substitute-path /home/rickyk/qt-4.8.6 /home/rickyk/qt-everywhere-opensource-src-4.8.6
+这是什么意思？其实就是让gdb在看到/home/rickyk/qt-4.8.6的时候他会做自动替换成/home/rickyk/qt-everywhere-opensource-src.4.8.6，也就是说gdb可以正确知道这个文件了。此时我们再show substitute-path可以看到此时的转换规则已经被我们加进去了
+
+(gdb) show substitute-path 
+List of all source path substitution rules:
+  `/home/rickyk/qt-4.8.6' -> `/home/rickyk/qt-everywhere-opensource-src-4.8.6'.
+【2】如果此时的gdb弹出的错误信息不是绝对路径的概念，而是相对路径的概念
+
+./a.cpp 没有那个文件或目录
+那么此时你可以用gdb的第二个源代码路径法宝----directory(dir) dirName来指定，也就是说如果我们此时的a.cpp不在当前目录下，而是在当前目录下的bak文件夹下，我们只要
+
+dir bak
+这个时候我们的gdb就会把你加进去的dir整个替换到相对路径的前面，自己做拼接，也就是说，现在的./a.cpp变成了./bak/a.cpp。
+
+注意两者的差别，对于绝对路径来说，你需要给出替换规则给他做字符串替换，对于相对路径来说，你需要给他目录来让他做拼接，也有点prefix的意思，这里的prefix由你给出，但相对路径整体结构由gdb给出，然后完成拼接操作。
+
+PS: 同时你需要在.gdbinit上加上一句
+
+set auto-load safe-path /
+这样你才能让gdb去正确的在别的目录进行读取源代码 。(这里面的原因我目前不是很清楚，总之就是我一开始使用set substitute-path的时候怎么用都不成功，加上这句之后才可以，有同学知道的也可以告诉我原因),我看了下auto-load的介绍
+
+set auto-load safe-path [directories]
+Set the list of directories (and their subdirectories) trusted for automatic loading and execution of scripts. You can also enter a specific trusted file. Each directory can also be a shell wildcard pattern; wildcards do not match directory separator - see FNM_PATHNAME for system function fnmatch (see fnmatch). If you omit directories, ‘auto-load safe-path’ will be reset to its default value as specified during gdb compilation.
+The list of directories uses path separator (‘:’ on GNU and Unix systems, ‘;’ on MS-Windows and MS-DOS) to separate directories, similarly to thePATHenvironment variable.
+
+感觉这是在设置自动可以读取的script路径，不知道这对于set substitute-pah有什么影响。按照参考链接的说法，设置这个命令应该是让gdb去读取可信赖路径的.gdbinit才对。
