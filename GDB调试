@@ -46,3 +46,11 @@ Set the list of directories (and their subdirectories) trusted for automatic loa
 The list of directories uses path separator (‘:’ on GNU and Unix systems, ‘;’ on MS-Windows and MS-DOS) to separate directories, similarly to thePATHenvironment variable.
 
 感觉这是在设置自动可以读取的script路径，不知道这对于set substitute-pah有什么影响。按照参考链接的说法，设置这个命令应该是让gdb去读取可信赖路径的.gdbinit才对。
+
+
+
+所以，调试任何一个exe的时候， 可以这样：
+cgdb --args ./darknet cfg/yolo.cfg yolo.weights data/dog.jpg --directory /path/to/src
+
+其中 --args 表示带参
+     --directory 表示源码搜索路径
