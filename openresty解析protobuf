@@ -1,5 +1,124 @@
-1. 解析大端小端的数据流
+1. 解析大端小端的数据流 @感谢openrest@3 群的热心朋友帮助
 2. 利用云风的pbc解析protobuf
 
-1> 解析大端小端的数据流
 
+题解： 假如我们传统TCP协议格式如下: |4byte msg len|4byte msg name len|msg name|protobuf binary data|checksum 4byte|... other 1byte|
+
+第一步： 解析大端小端的数据流
+在openresty中stream端口映射中处理lua文件
+
+// type 在chenweijing/notebook/type.lua 放入/path/to/openresty/lualib/resty/struct/下(见type.lua)文件
+local type = require "resty.struct.type"
+
+local sock = ngx.req.socket() -- 获取openrestysock对象
+sock:settimeout(30000)        -- 30 sec 
+
+消息总长度：
+local data, err = sock:receive(4)    -- 获取tcp协议4个字节长度，表示消息长度（tcp自定义协议惯用做法）
+local len = type.get_int(data, 'be') -- 大端转小端数据
+
+消息名长度：
+data, err = sock:receive(4)     -- 获取tcp协议4个字节长度，表示消息长度（tcp自定义协议惯用做法）
+local msg_len = type.get_int(data, 'be')  -- 大端转小端数据
+local msg_name = sock:receive(msg_name_len) -- 消息名, 之前c++用于protobuf反射
+
+protobuf二进制数据:
+local body_len = len - 4 - msg_name_len - 4
+local data, err = sock:receive(body_len)
+
+解析protobuf数据：
+local user  = pb.decode("test.User",data)
+print(user.username, user.password)   -- 成功解析
+
+----------------------------------------------------------------------------------------------------------
+以上是一个解析步骤， 就差一个pb.decode没有说明， pb.decode是用的云风的pbc库解析protobuf
+
+问题一： 如何编译pbc源码
+1> 下载pbc源码
+2> cd pbc
+3> make
+这时会产生一个 build文件夹(不管它里面内容）
+cd bangding文件夹， 里面会有两个文件夹 lua lua53
+根据openresty最新版本，选择lua(5.1)
+
+因为是我们的东西是在openresty底下跑，所以编译的时候，要修改lua下面Makefile配置
+# LUADIR = /usr/local/lua 
+LUADIR = /usr/local/openresty/luajit/include/luajit-2.1 #这里是openresty
+然后make就可以了, 会产生一个protobuf.so文件
+stream {
+    lua_package_path './?.lua;;';
+    lua_package_cpath '/usr/work/soft/pbc/binding/lua/?.so;;'; # 指向生成的protobuf.so 
+}
+
+或者把protobuf.so拷贝到/usr/local/openresty/lualib
+cp protobuf.so /usr/local/openresty/lualib
+
+======================================================================
+至此，我们openresty已经支持解析protobuf协议了
+
+附上完成实例代码：
+protofile ： test.proto
+
+package test;
+message User {
+  optional string username = 1;
+  optional string password = 2;
+}
+
+生成.pb文件
+protoc --descriptor_set_out=test.pb test.proto
+
+test.lua代码：
+local pb = require "protobuf"            -- 解析protobuf协议
+local type = require "resty.struct.type" -- 大端小端转换
+
+-- 注册到lua
+local rd  = io.open("test.pb","rb")
+local buffer = rd:read("*a")
+rd:close()
+pb.register(buffer)
+
+local sock = ngx.req.socket()      -- 获取ngx socket
+sock:settimeout(30000)             -- 30 sec   
+
+-- 循环读取数据
+while true do 
+    -- read msg len
+    local len = 0
+    
+    while true do
+      -- 心跳包 不做处理， 继续接收数据
+	    local data, err = sock:receive(4)
+      if not data or err then
+            return
+      end
+      len = type.get_int(data, 'be')
+      if len > 0 then
+            break
+       end
+    end  
+    
+    -- 消息名长度：
+    data, err = sock:receive(4)     -- 获取tcp协议4个字节长度，表示消息长度（tcp自定义协议惯用做法）
+    local msg_len = type.get_int(data, 'be')  -- 大端转小端数据
+    local msg_name = sock:receive(msg_name_len) -- 消息名, 之前c++用于protobuf反射
+
+    -- protobuf二进制数据:
+    local body_len = len - 4 - msg_name_len - 4
+    local data, err = sock:receive(body_len)
+
+    -- 解析protobuf数据：
+    local user  = pb.decode("test.User",data)
+    print(user.username, user.password)   -- 成功解析
+    
+    -- 处理业务逻辑
+ end
+ 
+ openresty配置：
+stream {
+    server {
+        lua_code_cache off;
+        listen 781;
+        content_by_lua_file test.lua;
+    }
+}
