@@ -54,3 +54,20 @@ cgdb --args ./darknet cfg/yolo.cfg yolo.weights data/dog.jpg --directory /path/t
 
 其中 --args 表示带参
      --directory 表示源码搜索路径
+     
+     
+   ------------------------------------------------------------- 
+   bt full 表示调用堆栈， 当程序崩溃是调用很有帮助
+   
+   bp（文件）
+   break main
+   break file：linenum
+   
+   启动： gdb myexe -x a.bp
+   
+   --------------------------------------------------------
+   段错误调试：
+   ulimit -c unlimited 让系统可以产生core文件
+   gdb myexe core
+  
+  
