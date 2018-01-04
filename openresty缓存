@@ -1,3 +1,32 @@
+全局缓存:https://github.com/openresty/lua-nginx-module#ngxshareddict
+ http {
+     lua_shared_dict dogs 10m;
+     server {
+         location /set {
+             content_by_lua_block {
+                 local dogs = ngx.shared.dogs
+                 dogs:set("Jim", 8)
+                 ngx.say("STORED")
+             }
+         }
+         location /get {
+             content_by_lua_block {
+                 local dogs = ngx.shared.dogs
+                 ngx.say(dogs:get("Jim"))
+             }
+         }
+     }
+ }
+
+
+
+
+
+
+
+
+
+
 局部缓存：ngx.ctx.xxx 
 http://wiki.jikexueyuan.com/project/openresty/openresty/share_var.html
 不同阶段共享变量
