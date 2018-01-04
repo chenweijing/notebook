@@ -1,2 +1,16 @@
 参考：http://wiki.jikexueyuan.com/project/openresty/openresty/share_var.html
 
+openresty 开启 
+http {
+  server {
+    listen 80;
+    lua_code_cache on;
+    
+    location /test {
+        content_by_lua_block xxx.lua;
+      }
+    }
+}
+
+其中xxx.lua的local变量都是从新开始， 而在xxx.lua中 local y = require "abc" 中abc的_M模块只会加载一次， 变量可以进行每次访问递增
+
