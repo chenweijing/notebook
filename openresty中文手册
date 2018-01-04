@@ -1,2 +1,5 @@
 openresty中文手册：
 https://github.com/openresty/nginx-tutorials/tree/master/zh-cn
+
+
+模块查询： https://github.com/openresty/lua-nginx-module
