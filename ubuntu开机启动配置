@@ -1,0 +1,49 @@
+1. sudo apt-get install sysv-rc-conf
+2. sysv-rc-conf
+
+二 启动级别
+
+Ubuntu默认启动级别为2
+
+root@lanny:/etc/rc2.d# runlevel
+
+N 2
+
+Ubuntu的默认开机的runlevel是2,可以用runlevel来查看当前的默认运行级别。
+
+debian系(ubuntu是基于debian)的Linux一直是用runlevel 2来默认启动，并且runlevel定义也与redhat有区别。debian的runlevel级别定义如下：
+
+0 – Halt，关机模式
+
+1 – Single，单用户模式
+
+2 - Full multi-user with display manager (GUI)
+
+3 - Full multi-user with display manager (GUI)
+
+4 - Full multi-user with display manager (GUI)
+
+5 - Full multi-user with display manager (GUI)
+
+6 – Reboot，重启
+
+可以发现2~5级是没有任何区别的。他们为多用户模式，这和一般的linux不一样。而redhat的runlevel级别定义如下：
+
+ 
+0：关机。不能将系统缺省运行级别设置为0，否则无法启动。
+
+1：单用户模式，只允许root用户对系统进行维护。
+
+2：多用户模式，但不能使用NFS（相当于Windows下的网上邻居）
+
+3：字符界面的多用户模式。
+
+4：未定义。
+
+5：图形界面的多用户模式。
+
+6：重启。不能将系统缺省运行级别设置为0，否则会一直重启。
+
+ 
+
+这里补充一下，多数的linux都是用一种叫System V的机制来启动运行级别，而ubuntu使用upstart代替init启动系统进程。所以没有那个inittab文件来改默认运行级别。ubuntu 的默认运行级别文件是/etc/init/rc-sysinit.conf。
