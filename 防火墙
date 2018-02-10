@@ -1,0 +1,9 @@
+　　limit_req_zone
+
+　　limit_req
+
+　　limit_req_status 
+
+　　limit_req_log_level
+  
+  https://www.cnblogs.com/zhen-rh/p/7424942.html
