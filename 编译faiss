@@ -1,0 +1,26 @@
+1. makefile.inc 从example_makefiles文件夹拷贝出来，并且重命名为makefile.inc， 里面有不同平台，选择linux平台
+
+2. makefile.inc 控制开关 CPU 与 GPU编译
+# -- FOR RELEASE COMPLIME ---- gpu/Makefile line 75
+这边控制代码(makefile.inc)：
+# This is for Centos:
+BLASLDFLAGS?=/usr/lib64/libopenblas.so.0
+
+# for Ubuntu 16:
+# sudo apt-get install libopenblas-dev python-numpy python-dev
+# BLASLDFLAGS?=/usr/lib/libopenblas.so.0
+
+# for Ubuntu 14:
+# sudo apt-get install libopenblas-dev liblapack3 python-numpy python-dev
+# BLASLDFLAGS?=/usr/lib/libopenblas.so.0 /usr/lib/lapack/liblapack.so.3.0
+
+# === 这部分是自己添加的 ====
+# ----FOR CPU----
+BLASLDFLAGS=/usr/lib/libopenblas.so.0 /usr/lib/lapack/liblapack.so.3.0
+
+# ----FOR GPU NVCC----- 
+#BLASLDFLAGS=/usr/lib/lapack/liblapack.so.3.0 -Xlinker /usr/lib/libopenblas.so.0 
+
+3. 更新过后，会产生libfaiss.a和libfaissgpu.a, 
+   (1) 编译libfaiss.a cd faiss --> 修改makefile.inc line 75  -----FOR CPU COMPLIME----- --> make
+   (1) 编译libfaissgpu.a cd faiss --> 修改makefile.inc line   -----FOR GPU NVCC COMPLIME----- ---> cd gpu --> make
