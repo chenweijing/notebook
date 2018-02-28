@@ -1,0 +1,79 @@
+user  root;
+worker_processes  1;
+daemon off;
+
+# error_log  logs/error.log  info;
+error_log  /dev/stdout  debug;
+
+#工作模式及连接数上限
+events {
+    #epoll是多路复用IO(I/O Multiplexing)中的一种方式
+    #但是仅用于linux2.6以上内核、可以大大提高nginx的性能
+    use   epoll;
+    #单个后台worker process进程的最大并发链接数
+    worker_connections  1024;
+    # multi_accept on; 
+}
+
+http {
+    client_max_body_size 10240m;
+    client_body_buffer_size 10240m; 
+    default_type  application/octet-stream;
+
+    lua_shared_dict dogs 10m;
+    lua_shared_dict cache 10m;
+    lua_shared_dict data_safe_lock 1m;
+
+    keepalive_timeout  65;
+
+    lua_package_path '/usr/work/deal/?.lua;;';
+    #lua_package_cpath '/usr/work/qiuziti2/Linux/batch/?.so;/usr/local/lib/?.so;;';
+    #init_worker_by_lua_file '/usr/work/qiuziti2/Linux/batch/get_font.lua';
+
+    #上游服务器服务测试
+    upstream search_server {  
+        server 127.0.0.1:8082;  
+    }  
+
+    server {
+        listen       8081;
+        server_name  localhost;
+        lua_code_cache off;
+
+        set $app_root /usr/work/deal/;
+
+        location ~ /lty/([-_a-zA-Z0-9/]+) {
+            default_type  text/html;
+            content_by_lua_file /usr/work/deal/$1.lua;
+        }
+
+        location = /reqbin {
+            // 直接发送
+            proxy_pass http://192.168.2.119:8082/lty/test;
+        }
+
+        location = /reqbin2 {
+            // 上游服务器发送
+            proxy_pass http://search_server/lty/test;
+        }
+
+        location /uptest {
+            default_type  text/html;
+            content_by_lua_block {
+                // 合并查询， 发送
+                local res = ngx.location.capture("/reqbin",  
+                {  
+                    method = ngx.HTTP_POST,
+                    args = {a="hello"},
+                })  
+
+                if res == nil or res.status ~= ngx.HTTP_OK then  
+                    ngx.say("capture failed")  
+                end  
+                ngx.say("---- reqbin2 ------ ")
+                ngx.say(res.body)  
+
+            } 
+        }
+    }
+}
