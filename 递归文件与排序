@@ -1,0 +1,103 @@
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <ftw.h>
+#include <stdio.h>
+
+// c++
+#include <map>
+#include <vector>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+extern "C" {
+    char* get_last_file();
+    void clear(const char* dir);
+};
+
+typedef struct File_data_{
+    int64_t ctime; 
+    std::string file; 
+
+    bool operator< (const File_data_& x) const { return this->ctime < x.ctime; }
+} File_data;
+
+std::vector<File_data> g_file_vec;
+
+int fn(const char* file, const struct stat *sb, int flag)
+{
+	if (flag == FTW_F) {
+		printf("%s %ld\n", file, sb->st_ctime);
+
+		struct File_data_ item;
+        item.ctime = sb->st_ctime;
+		item.file = file;
+		g_file_vec.push_back(item);
+	}
+
+	return 0;
+}
+
+// 获取最后的文件
+const char * get_last_file(const char* dir)
+{
+	g_file_vec.clear();
+
+	ftw(dir, fn, 500);
+
+	printf("-----------------\n");
+
+	std::sort(g_file_vec.begin(), g_file_vec.end());
+
+	for (int i=0; i<g_file_vec.size(); i++){
+		printf("%s %ld\n", g_file_vec[i].file.c_str(), g_file_vec[i].ctime);
+	}
+
+	printf("-----------------\n");
+
+	int size = g_file_vec.size();
+
+	const char * file = "";
+
+	if (size > 0){
+		file = g_file_vec[size-1].file.c_str();
+	}
+
+	printf("last file:%s\n", file);
+
+	return file;
+}
+
+void clear(const char* dir)
+{
+	g_file_vec.clear();
+
+	ftw(dir, fn, 500);
+
+	printf("-----------------\n");
+
+	std::sort(g_file_vec.begin(), g_file_vec.end());
+
+	for (int i=0; i<g_file_vec.size(); i++){
+		printf("%s %ld\n", g_file_vec[i].file.c_str(), g_file_vec[i].ctime);
+	}
+
+	printf("-----------------\n");
+
+	int size = g_file_vec.size() - 5;
+
+	if (size > 0) {
+		for (int i=0; i<size; i++){
+			printf("del %s %ld\n", g_file_vec[i].file.c_str(), g_file_vec[i].ctime);
+			remove(g_file_vec[i].file.c_str());
+		}
+	}
+}
+
+int main()
+{
+	// get_last_file("./data");
+	clear("./data");
+	return 0;
+}
