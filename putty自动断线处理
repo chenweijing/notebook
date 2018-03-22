@@ -1,0 +1,11 @@
+1.进入putty, 选择左侧的Connection
+
+
+2.在右侧有Sending of null packets to keep session active
+
+设为10即可
+
+（意思每是十秒发送一次空包用来保持连接）
+
+
+完成
