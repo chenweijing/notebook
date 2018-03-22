@@ -47,3 +47,33 @@ debian系(ubuntu是基于debian)的Linux一直是用runlevel 2来默认启动，
  
 
 这里补充一下，多数的linux都是用一种叫System V的机制来启动运行级别，而ubuntu使用upstart代替init启动系统进程。所以没有那个inittab文件来改默认运行级别。ubuntu 的默认运行级别文件是/etc/init/rc-sysinit.conf。
+
+
+
+------------------------------------------------------------
+服务脚本
+#!/bin/bash
+
+start()
+{
+     xxxx.exe >/dev/null 2>&1 &
+}
+
+stop()
+{
+     killall xxxx.exe >/dev/null
+ }
+ 
+ case "$1" in
+ start)
+     start
+     ;;
+ stop)
+     stop
+     ;;
+ restart)
+     stop
+     start
+     ;;
+ *)
+    echo "usage:$0 start|stop|restart"
