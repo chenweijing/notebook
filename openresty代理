@@ -1,3 +1,42 @@
+------------------- nginx.conf --------------------------
+http {
+    #字体索引服务器
+    upstream search_server {  
+        server 127.0.0.1:80;  
+    }  
+
+    server {
+        listen       9090;
+        server_name  localhost;
+        lua_code_cache off;
+        
+        #上游搜索服务
+        location = /font_search {
+            proxy_pass http://search_server/api/search;
+        }
+    }
+}
+
+-------------------------------- lua ----------------------------
+local res_search = ngx.location.capture("/font_search",  
+        					{  
+            					method = ngx.HTTP_POST,
+            					body = ngx.encode_args({typ = 1, imgData = image_data})
+         					})
+
+
+	if res_search.status == ngx.HTTP_OK then
+		print("--> search result:", res_search.body)  
+    	ngx.say(res_search.body)
+    else
+    	result["err"] = 500
+    	result["errinfo"] = "font search failed!"
+		local str = cjson.encode(result)
+		ngx.say(str)
+	end
+
+
+-----------------------------------------------------------------------------------------------------------------
 user  root;
 worker_processes  1;
 daemon off;
