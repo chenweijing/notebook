@@ -1,0 +1,121 @@
+-------------- 返回const char* 数据 -------------------
+-- .so
+ffi.cdef [[
+    struct ComponentsResult {
+        const char* image_data;
+        int image_data_len;
+
+        const char* image_box;
+        int image_box_len;
+
+        const char* image_ids;
+        int image_ids_len;
+
+        int err;
+    };
+    
+    struct ComponentsResult  get_components_c(const char* encodedImgData,
+        bool        bNeedRevertBack,
+        bool        bNeedNormalize,
+        int         mergeType);
+]]
+
+function _M.get_components(encodedImgData, bNeedRevertBack, bNeedNormalize, mergeType)
+    local res = kernel.get_components_c(encodedImgData, bNeedRevertBack, bNeedNormalize, mergeType)
+
+    local image_data = nil
+    local image_box = nil
+    local image_ids = nil
+
+    if res.err == 0 then
+        -- print("lua image_data:", res.image_data_len)
+        image_data =  ffi.string(res.image_data, res.image_data_len)
+        image_box =  ffi.string(res.image_box, res.image_box_len)
+        image_ids =  ffi.string(res.image_ids, res.image_ids_len)
+    end
+
+    return image_data, image_box, image_ids, res.err
+end
+
+
+ffi.string(res.image_data, res.image_data_len)
+使用ffi.string()把const char* 数据，转换为lua string
+第一个是const char* 指针， 第二个参数为字符串长度
+
+----------------------------------------- 二进制数据拷贝 -------------------------------
+c
+#include <stdio.h>
+
+typedef struct { 
+    int a;
+    int b;
+} foo_t;
+
+int test_foot(foo_t* foo, int size)
+{
+    int i = 0;
+    printf("size=%d\n", size);
+    printf("--------------- c -------------- \n");
+
+    for (; i<size; i++){
+        printf("a=%d, b=%d\n", foo[i].a, foo[i].b);
+    }
+
+    i = 0;
+
+    // printf("dump %d\n", 100/i);
+    
+
+    return 0;
+}
+
+
+
+第一加载动态库
+local ffi = require "ffi"
+
+ffi.cdef [[
+    typedef struct { int a; int b; } foo_t;
+    int test_foot(foo_t* foo, int size);
+]]
+
+--[[
+local arr = ffi.load("array")
+
+定义结构体
+
+local n = 100000
+local arr_foo_t = ffi.typeof("foo_t[?]")
+local foos = ffi.new(arr_foo_t, n)
+
+for i=0, n-1 do
+    foos[i].a = i+1
+    foos[i].b = i+2
+end
+
+
+arr.test_foot(foos, n)
+
+print("hello lua")
+]]
+
+把float数据装进lua string中去， 相当于内存拷贝
+local n = 512
+local a = ffi.new('float[?]', 512)
+for i=0, n-1 do
+    a[i] = 1.11
+end
+
+local str = ffi.string(a, n*4)
+
+--------- 内存拷贝， 把lua string中二进制数据， 赋值给float数组 ----------------
+
+local float = ffi.new('float[?]', n)
+ffi.copy(float, str, #str)
+
+for i=0, n-1 do
+    print(i,float[i])
+end
+
+-------------------------------------------------------------
+
