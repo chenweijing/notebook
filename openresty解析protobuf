@@ -122,3 +122,31 @@ stream {
         content_by_lua_file test.lua;
     }
 }
+
+--------------------------------------------------------------------------------------
+1. require "protobuf"
+2. 注册pb文件，利用该文件decode或者encode它的protobuffer对象,见下面的例子：
+   echo "package test" > test.proto
+   echo "message Mytest {optional sint64 testid=1;}" >> test.proto
+   protoc --descriptor_set_out test.pb test.proto
+  以上方法生成了pb文件，下面的方法是用lua对pb的decode和encode过程
+   pb = require "protobuf"
+   protobuf.register_file("./test.pb")
+   stringbuffer = pb.encode("test.Mytest",
+                   {
+                         testid = 10;                    })
+   result = pb.encode("test.Mytest", stringbuffer)
+   print("result="..result.testid)
+
+这只是云风提供的方法之一，lua对pb的decode和encode过程的方法之二如下：
+file = io.open("./test.pb", "rb")
+  buffer = file:read "*a"
+  file:close()
+  pb.register(buffer)
+  stringbuffer = pb.encode("test.Mytest",
+                        {
+                                testid =100;
+                        })
+ result = pb.decode("test.Mytest", stringbuffer)
+ print("result="..result.testid)
+云风还提供了第三种方法，是用Lua parser，因为这种方法需要用到lua 的 Lpeg模块，暂时还没有研究这个功能，等后面再补上。
