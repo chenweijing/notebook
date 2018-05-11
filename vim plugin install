@@ -1,20 +1,23 @@
 --- YCM INSTALL ---
-#download
-cd ~./vim/bundle
-git clone https://github.com/Valloric/YouCompleteMe.git
-cd YouCompleteMe
-git submodule update --init --recursive
+sudo apt-get update         #更新软件源
+sudo apt-get install clang          #安装clang
+sudo apt-get install cmake          #安装cmake
+sudo apt-get install vim        #安装vim
+sudo apt-get install python python-dev  #安装Python相关
 
-#libclang
-sudo apt-get install libclang-dev
-sudo apt-get install cmake
-sudo apt-get install python-dev
+sudo apt-get install vim-addon-manager  #这应该是一个vim的插件管理器
+sudo apt-get install vim-youcompleteme  #安装YCM
+vim-addons install youcompleteme    #将YCM加入addons管理器中
 
-#llvm
-cd ~
-mkdir ycm_build
-cd ycm_build
 
-http://releases.llvm.org/download.html#3.6.2
 
-https://www.linuxidc.com/Linux/2015-07/120352.htm
+
+
+
+
+
+
+
+
+
+
