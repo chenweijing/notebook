@@ -1,0 +1,20 @@
+--- YCM INSTALL ---
+#download
+cd ~./vim/bundle
+git clone https://github.com/Valloric/YouCompleteMe.git
+cd YouCompleteMe
+git submodule update --init --recursive
+
+#libclang
+sudo apt-get install libclang-dev
+sudo apt-get install cmake
+sudo apt-get install python-dev
+
+#llvm
+cd ~
+mkdir ycm_build
+cd ycm_build
+
+http://releases.llvm.org/download.html#3.6.2
+
+https://www.linuxidc.com/Linux/2015-07/120352.htm
