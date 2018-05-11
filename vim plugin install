@@ -9,6 +9,8 @@ sudo apt-get install vim-addon-manager  #这应该是一个vim的插件管理器
 sudo apt-get install vim-youcompleteme  #安装YCM
 vim-addons install youcompleteme    #将YCM加入addons管理器中
 
+https://blog.csdn.net/sanoseiichirou/article/details/53791317
+
 
 
 
