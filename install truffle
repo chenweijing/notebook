@@ -29,6 +29,8 @@ mkdir /path/to/work/myproject
 cd /path/to/work/myproject
 truffle init
 
+npm install -g ethereumjs-testrpc
+
 
 
 
