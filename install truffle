@@ -1,0 +1,8 @@
+首先安装npm
+sudo apt-get install truffle
+
+去掉安全性，不然会报错
+npm config set strict-ssl false 
+
+
+
