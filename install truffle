@@ -8,6 +8,11 @@ npm config set strict-ssl false
 npm uninstall truffle 
 npm install -g truffle@2.1.1
 
+https://blog.csdn.net/anda0109/article/details/79494066
 
+    ubuntu-14.04 ubuntu-14.04-desktop-amd64.iso ，不多解释。
+    nodejs用来安装truffle等工具
+    truffle ，目前最好用的以太坊开发框架
+    ganache ，可以跑开发环境下的私有区块链
 
 
