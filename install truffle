@@ -4,15 +4,32 @@ sudo apt-get install truffle
 去掉安全性，不然会报错
 npm config set strict-ssl false 
 
-正确的做法：
-npm uninstall truffle 
-npm install -g truffle@2.1.1
-
 https://blog.csdn.net/anda0109/article/details/79494066
 
     ubuntu-14.04 ubuntu-14.04-desktop-amd64.iso ，不多解释。
     nodejs用来安装truffle等工具
     truffle ，目前最好用的以太坊开发框架
     ganache ，可以跑开发环境下的私有区块链
+
+成功做法：
+从nodejs.org中下载relsease
+解压， mv nodejs-xxx /usr/local/node
+
+vim /etc/profile
+export PATH=$PATH:/usr/local/node/bin/
+source /etc/profile
+
+node -v
+npm -v 
+有显示成功就说明nodejs安装成功了
+
+npm install -g truffle
+
+mkdir /path/to/work/myproject
+cd /path/to/work/myproject
+truffle init
+
+
+
 
 
