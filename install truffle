@@ -32,6 +32,6 @@ truffle init
 npm install -g ethereumjs-testrpc
 
 
-
-
+学些solidity
+http://wiki.jikexueyuan.com/project/solidity-zh/introduction-smart-contracts.html
 
