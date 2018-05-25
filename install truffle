@@ -12,6 +12,7 @@ https://blog.csdn.net/anda0109/article/details/79494066
     ganache ，可以跑开发环境下的私有区块链
 
 成功做法：
+https://nodejs.org/download/release
 从nodejs.org中下载relsease
 解压， mv nodejs-xxx /usr/local/node
 
