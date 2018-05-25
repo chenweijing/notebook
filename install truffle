@@ -35,3 +35,6 @@ npm install -g ethereumjs-testrpc
 学些solidity
 http://wiki.jikexueyuan.com/project/solidity-zh/introduction-smart-contracts.html
 
+truffle console
+> Hello.deployed().then(i=>i.setHello("hello world"))
+
