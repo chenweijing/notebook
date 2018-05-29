@@ -118,4 +118,27 @@ for i=0, n-1 do
 end
 
 -------------------------------------------------------------
+注意： 在动态库里面，要给返回指向的数据加生命周期，以确保数据返回的时候不被析构。
+
+struct ConfirmComponentsResult  confirm_components_c(const char* encodedImgData, const char* strImageBBox)
+{
+	static std::shared_ptr<std::string> strImageData;
+	int err = ConfirmComponents(encodedImgData, strImageBBox, strImageData);
+
+	struct ConfirmComponentsResult res;
+	if (err == 0){
+		res.image_data = strImageData->c_str();
+		res.image_data_len = strImageData->size();
+	}else{
+		printf("c++ confirm_components_c error:%d\n", err);
+	}
+
+	res.err = err;
+	return res;
+}
+
+	static std::shared_ptr<std::string> strImageData;
+    其中这里static保证了生命中期，不然有时候回返回数据异常（前面丢失字节）
+    
+    
 
