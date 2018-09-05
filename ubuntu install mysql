@@ -29,3 +29,40 @@ sudo apt-get install libmysqlclient-dev
 sudo service mysql start
 sudo service mysql stop
 sudo service mysql status
+
+--------------- 允许远程访问 ----------------------------
+
+https://www.cnblogs.com/ruofengzhishang/p/5477502.html
+
+>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+将bind-address = 127.0.0.1注释掉（即在行首加#)
+
+2.删除匿名用户
+
+登录进数据库：
+代码如下:
+
+>mysql -uroot -p123456
+
+然后，切换到数据库mysql。SQL如下：
+代码如下:
+
+use mysql;
+
+然后，删除匿名用户。SQL如下：
+代码如下:
+
+delete from user where user='';
+3.增加允许远程访问的用户或者允许现有用户的远程访问。
+
+接着上面，删除匿名用户后，给root授予在任意主机（%）访问任意数据库的所有权限。SQL语句如下：
+代码如下:
+
+mysql> grant all privileges on *.* to 'root'@'%' identified by '123456' with grant option;
+
+如果需要指定访问主机，可以把%替换为主机的IP或者主机名。另外，这种方法会在数据库mysql的表user中，增加一条记录。如果不想增加记录，只是想把某个已存在的用户（例如root）修改成允许远程主机访问，则可以使用如下SQL来完成：
+代码如下:
+
+update user set host='%' where user='root' and host='localhost';
+
+
