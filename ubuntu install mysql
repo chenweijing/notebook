@@ -1,0 +1,7 @@
+sudo apt-get install mysql-server mysql-client
+
+sudo start mysql #手动的话这样启动
+
+sudo stop mysql #手动停止
+
+http://wiki.ubuntu.org.cn/MySQL
