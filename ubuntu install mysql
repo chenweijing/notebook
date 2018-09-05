@@ -5,3 +5,27 @@ sudo start mysql #手动的话这样启动
 sudo stop mysql #手动停止
 
 http://wiki.ubuntu.org.cn/MySQL
+
+
+---------------------------------------------------------------------------
+sudo apt-get autoremove --purge mysql-server-5.7 
+#sudo apt-get remove mysql-server         # 没用到,已经没有mysql-server
+#sudo apt-get autoremove mysql-server  # 没用到,已经没有mysql-server
+sudo apt-get remove mysql-common
+sudo rm -rf /etc/mysql/  /var/lib/mysql    #很重要
+#清理残留数据
+dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P  
+sudo apt autoremove
+sudo apt autoreclean
+
+
+安装MySQL:
+
+sudo apt-get install mysql-server
+sudo apt-get install mysql-client
+sudo apt-get install libmysqlclient-dev
+ 启动、关闭服务和查看运行状态
+
+sudo service mysql start
+sudo service mysql stop
+sudo service mysql status
