@@ -1,0 +1,6 @@
+ok, err = red:set(stbid,value)
+            if not ok then
+                ngx.say("failed to set action 1",stbid , err)
+                return
+            end
+       red:expire(stbid,"36000") -- add expire time 36000ms
