@@ -1,0 +1,64 @@
+init 阶段：
+
+（1）init_by_lua context:http
+
+（2）init_worker_by_lua context:http
+
+
+
+rewrite/access阶段：
+
+请求类型：
+
+1、http类型：
+
+（1）set_by_lua context:server,server if, location,location if
+
+（2）rewrite_by_lua context:http,server,location,location if
+
+（3）access_by_lua context:http,server,location, location if
+
+2、https类型：
+
+（1）ssl_certificate_by_lua context:server
+
+（2）set_by_lua context:server,server if, location,location if
+
+（3）rewrite_by_lua context:http,server,location,location if
+
+（4）access_by_lua context:http,server,location, location if
+
+
+
+content阶段
+
+响应生成方式
+
+1、lua方式
+
+（1）content_by_lua context:location,location if
+
+（2）header_filter_by_lua context:http,server,location, location if
+
+（3）body_filter_by_lua context:http,server.location,location if
+
+2、upstream方式
+
+（1）balancer_by_lua context:upstream
+
+（2）header_filter_by_lua context:http,server,location, location if
+
+（3）body_filter_by_lua context:http,server.location,location if
+
+3、其他方式（如 echo）
+
+（1）header_filter_by_lua context:http,server,location, location if
+
+（2）body_filter_by_lua context:http,server.location,location if
+
+
+
+log 阶段
+
+log_by_lua context:http,server,location,location if
+
