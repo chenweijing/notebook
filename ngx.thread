@@ -1,0 +1,6 @@
+function work_thread()
+  while ture do
+  end
+ end
+ 
+ ngx.thread.spawn(work_thread)
