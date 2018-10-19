@@ -1,1 +1,56 @@
 https://yeasy.gitbooks.io/docker_practice/content/
+
+## docker 远程访问
+vim /etc/default/docker
+DOCKER_OPTS="-H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375"
+然后重新启动docker守护进程。
+sudo service docker restart
+
+环境：
+计算机A为本机计算机；
+计算机B上创建docker容器；
+
+目的：
+在A上ssh远程登录B上的docker容器：
+
+计算机B上创建docker容器步骤：
+（1）在ubuntu镜像中创建容器：
+docker run -it ubuntu:16.04 /bin/bash
+
+（2）进入容器，设置容器root密码
+修改容器的root密码：passwd
+密码设置为：123456
+
+（3）修改ssh配置,允许root登录
+vi /etc/ssh/sshd_config
+将PermitRootLogin的值从withoutPassword改为yes
+
+（4）重启ssh服务
+service ssh start
+
+（5）将ubuntu刚刚的容器重新命名为ubuntu-ssh：
+docker commit container-id new-name
+docker commit 0d4f0b249ff5 ubuntu-ssh
+
+（6）将新的镜像启动，并将docker服务器的50001端口映射到容器的22端口上
+docker run -it -p 50001:22 ubuntu-ssh /bin/bash
+
+（7）重启ssh服务
+service ssh start
+
+在计算机A上ssh远程登录上述B创建的容器：
+ssh root@192.168.1.249 -p 50001
+192.168.1.249为B的ip地址
+
+ww@NiandeMacBook-Pro  ~  ssh root@192.168.1.249 -p 50001
+The authenticity of host '[192.168.1.249]:50001 ([192.168.1.249]:50001)' can't be established.
+ECDSA key fingerprint is SHA256:/i5usXixuOlLTjQO49xbMQEqE/Zj88UsnRmgKlZZ7Rc.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '[192.168.1.249]:50001' (ECDSA) to the list of known hosts.
+root@192.168.1.249's password:
+此时输入的密码是当时在容器中所设置修改的root密码，123456
+
+作者：樱桃小丸子zz
+链接：https://www.jianshu.com/p/c4d4ee6f3663
+來源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
