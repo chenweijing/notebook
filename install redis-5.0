@@ -1,0 +1,38 @@
+#install redis-5.0
+wget http://download.redis.io/releases/redis-5.0.0.tar.gz
+sudo tar xzvf redis-5.0.0.tar.gz
+
+mkdir /usr/local/redis-5.0.0
+mkdir /etc/redis-5.0.0
+
+cp -r redis-5.0.0/* /usr/local/redis-5.0.0/
+
+ls /usr/local/redis-5.0.0/
+
+cd  /usr/local/redis-5.0.0
+
+sudo make MALLOC=libc
+sudo make test MALLOC=libc
+sudo make install 
+
+ls /usr/local/bin/redis-*
+结果：
+--/usr/local/bin/redis-benchmark     性能测试工具
+--/usr/local/bin/redis-check-aof     更新日志检查
+--/usr/local/bin/redis-check-dump    本地数据文件检查
+--/usr/local/bin/redis-cli           命令行操作工具
+--/usr/local/bin/redis-server        服务器程序
+
+
+cp redis.conf /etc/redis-5.0.0/
+ls /etc/redis-5.0.0/redis.conf
+cd /etc/redis-5.0.0 
+vim redis.conf(按“i”键后可以输入内容，完成修改后，按左上角“Esc”键，再输入“:wq”命令，按Enter键 退出文本编辑)
+
+cd /usr/local/redis-5.0.0
+redis-server /etc/redis-5.0.0/redis.conf
+
+redis-cli shutdown
+redis-cli -p 6379 shutdown
+redis-cli -h 192.168.9.206 -p 6379 shutdown
+
