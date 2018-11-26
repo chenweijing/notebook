@@ -1,0 +1,18 @@
+想要在登录界面使用root身份登录，
+可编辑 /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf目录下的 文件，
+如没有此文件，直接创建 /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf进入 /usr/share/lightdm/lightdm.conf.d/
+
+cd  /usr/share/lightdm/lightdm.conf.d/
+
+vim /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
+
+[SeatDefaults]
+user-session=ubuntu
+autologin-user=root
+greeter-session=unity-greete
+greeter-show-manual-login=true
+allow-guest=false
+
+更改/root/.profile文件 
+把mesg n 进行注释，增加一行 tty -s && mesg n 
+然后reboot
