@@ -16,3 +16,24 @@ allow-guest=false
 更改/root/.profile文件 
 把mesg n 进行注释，增加一行 tty -s && mesg n 
 然后reboot
+
+
+1）检查是否开启SSH服务 
+
+　　命令：ps -e|grep ssh  查看SSH服务是否开启，或者通过命令：service sshd status 可以查看某个服务的状态。
+
+（2）安装SSH服务
+
+ 　  通过apt-get 安装，命令：apt-get install ssh 
+
+（3）启动SSH服务
+
+　  命令：sudo /etc/init.d/ssh start
+
+（4）修改SSH配置文件
+
+ 　命令：sudo vim /etc/ssh/sshd_config，找到PermitRootLogin without-password 修改为PermitRootLogin yes
+
+（5）重启SSH服务
+
+　命令：service ssh restart
