@@ -6,9 +6,7 @@ git submodule update --init --recursive
 主要是要安装c-ares fmt库
 
 1 编译:
-1> ./configure.py --compiler=/opt/rh/devtoolset-8/root/usr/bin/g++ \
---cflags=-DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW \
---ldflags=-lstdc++fs  --mode=release --enable-dpdk --c++-dialect=gnu++17 --without-tests
+1> ./configure.py --compiler=/opt/rh/devtoolset-8/root/usr/bin/g++ --cflags=-DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW --ldflags=-lstdc++fs  --mode=release --enable-dpdk --c++-dialect=gnu++17 --without-tests
 
 2> vim build/release/build.najia 替换-std=gnu++11 为 -std=gnu++17
 
@@ -88,14 +86,10 @@ clean:
 虚拟机上: ./udp_client_demo --overprovisioned --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0 -c 1 \
 --server 192.168.0.180:10001
 
-sudo build/release/apps/httpd/httpd --poll-mode --network-stack native --dpdk-pmd --dhcp 0 \
---host-ipv4-addr 192.168.0.180 --netmask-ipv4-addr 255.255.255.0 --smp 24 \
---default-log-level info --log-to-syslog 1
+sudo build/release/apps/httpd/httpd --poll-mode --network-stack native --dpdk-pmd --dhcp 0 --host-ipv4-addr 192.168.0.180 --netmask-ipv4-addr 255.255.255.0 --smp 24 --default-log-level info --log-to-syslog 1
 
 https://github.com/scylladb/seastar/wiki
 https://github.com/scylladb/seastar/wiki/HTTPD-benchmark
 
-sudo build/release/apps/seawreck/seawreck --server $seastar_ip:10000 \
---host-ipv4-addr $tester_ip --dhcp 0 --netmask-ipv4-addr 255.255.255.0 \
---network-stack native --dpdk-pmd --collectd 0 --duration 60 --smp $tcpu --conn $tcpu*64
+sudo build/release/apps/seawreck/seawreck --server $seastar_ip:10000 --host-ipv4-addr $tester_ip --dhcp 0 --netmask-ipv4-addr 255.255.255.0 --network-stack native --dpdk-pmd --collectd 0 --duration 60 --smp $tcpu --conn $tcpu*64
 
