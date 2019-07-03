@@ -1,3 +1,10 @@
+get seastar:
+git clone https://github.com/scylladb/seastar.git
+git submodule update --init --recursive
+
+或许可能要: CXX=/opt/rh/devtoolset-8/root/usr/bin/g++ ./cooking.sh -i c-ares -i fmt -t Release
+主要是要安装c-ares fmt库
+
 1 编译:
 1> ./configure.py --compiler=/opt/rh/devtoolset-8/root/usr/bin/g++ --cflags=-DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW --ldflags=-lstdc++fs  --mode=release --enable-dpdk --c++-dialect=gnu++17 --without-tests
 
@@ -74,3 +81,9 @@ test:
 
 clean:
 	rm -f *.o a.out
+	
+启动:
+虚拟机上: ./udp_client_demo --overprovisioned --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0 -c 1 --server 192.168.0.180:10001
+
+sudo build/release/apps/httpd/httpd --poll-mode --network-stack native --dpdk-pmd --dhcp 0 --host-ipv4-addr 192.168.0.180 --netmask-ipv4-addr 255.255.255.0 --smp 24 --default-log-level info --log-to-syslog 1
+
