@@ -9,6 +9,7 @@ git submodule update --init --recursive
 1> ./configure.py --compiler=/opt/rh/devtoolset-8/root/usr/bin/g++ --cflags=-DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW --ldflags=-lstdc++fs  --mode=release --enable-dpdk --c++-dialect=gnu++17 --without-tests
 
 2> vim build/release/build.najia 替换-std=gnu++11 为 -std=gnu++17
+or sed -i 's/-std=gnu++11/-std=gnu++17/g' build/release/build.najia
 
 3> ninja -C build/release
 
