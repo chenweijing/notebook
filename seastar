@@ -1,0 +1,76 @@
+1 编译:
+1> ./configure.py --compiler=/opt/rh/devtoolset-8/root/usr/bin/g++ --cflags=-DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW --ldflags=-lstdc++fs  --mode=release --enable-dpdk --c++-dialect=gnu++17 --without-tests
+
+2> vim build/release/build.najia 替换-std=gnu++11 为 -std=gnu++17
+
+3> ninja -C build/release
+
+报错时添加: -lboost_unit_test_framework
+
+4> 再次ninja -C build/release 没有错误为止
+
+5> ninja -C build/release install
+
+2. app makefile
+CC = /opt/rh/devtoolset-8/root/bin/g++
+
+INCLUDES = -I/usr/local/include 
+
+seastar_dir = /usr/work/finally/seastar/build/release
+dpdk_dir = ${seastar_dir}/_cooking/installed/lib
+
+DEFINES = -DBOOST_ALL_NO_LIB -DBOOST_TEST_DYN_LINK -DSEASTAR_HAS_MEMBARRIER \
+-DSEASTAR_HAVE_ASAN_FIBER_SUPPORT -DSEASTAR_HAVE_GCC6_CONCEPTS \
+-DSEASTAR_HAVE_HWLOC -DSEASTAR_HAVE_LZ4_COMPRESS_DEFAULT \
+-DSEASTAR_HAVE_NUMA -DSEASTAR_USE_STD_OPTIONAL_VARIANT_STRINGVIEW -DSEASTAR_TESTING_MAIN
+
+FLAGS = -O2 -DNDEBUG -std=gnu++17 -U_FORTIFY_SOURCE -Wno-maybe-uninitialized \
+-fconcepts -fvisibility=hidden -UNDEBUG -Wall -Werror -Wno-error=deprecated-declarations -gz -std=gnu++17
+
+LINK_LIBRARIES = -Wl,-rpath,/usr/local/lib \
+/usr/local/lib/libboost_program_options.a -lstdc++fs \
+${seastar_dir}/libseastar.a \
+/usr/local/lib/libboost_program_options.a \
+/usr/local/lib/libboost_thread.a -lpthread \
+/usr/local/lib/libcares.so /usr/lib64/libcryptopp.so \
+/usr/local/lib64/libfmt.a /usr/lib64/liblz4.so -ldl \
+/usr/local/lib/libboost_filesystem.a /usr/lib64/libgnutls.so -latomic \
+/usr/lib64/libsctp.so /usr/lib64/libprotobuf.so -lrt /usr/lib64/libyaml-cpp.so \
+-Wl,--whole-archive \
+${dpdk_dir}/librte_cmdline.a \
+${dpdk_dir}/librte_ethdev.a \
+${dpdk_dir}/librte_hash.a \
+${dpdk_dir}/librte_mbuf.a \
+${dpdk_dir}/librte_eal.a \
+${dpdk_dir}/librte_kvargs.a \
+${dpdk_dir}/librte_mempool.a \
+${dpdk_dir}/librte_mempool_ring.a \
+${dpdk_dir}/librte_pmd_bnxt.a \
+${dpdk_dir}/librte_pmd_cxgbe.a \
+${dpdk_dir}/librte_pmd_e1000.a \
+${dpdk_dir}/librte_pmd_ena.a \
+${dpdk_dir}/librte_pmd_enic.a \
+${dpdk_dir}/librte_pmd_fm10k.a \
+${dpdk_dir}/librte_pmd_qede.a \
+${dpdk_dir}/librte_pmd_i40e.a \
+${dpdk_dir}/librte_pmd_ixgbe.a \
+${dpdk_dir}/librte_pmd_nfp.a \
+${dpdk_dir}/librte_pmd_ring.a \
+${dpdk_dir}/librte_pmd_sfc_efx.a \
+${dpdk_dir}/librte_pmd_vmxnet3_uio.a \
+${dpdk_dir}/librte_ring.a \
+${dpdk_dir}/librte_net.a \
+${dpdk_dir}/librte_timer.a \
+${dpdk_dir}/librte_pci.a \
+${dpdk_dir}/librte_bus_pci.a \
+${dpdk_dir}/librte_bus_vdev.a \
+-Wl,--no-whole-archive /usr/lib64/libhwloc.so \
+/usr/local/lib64/libfmt.a /usr/lib64/libnuma.so
+
+test:
+	$(CC) $(FLAGS) -c f.cc -o f.o $(INCLUDES) $(DEFINES)
+	$(CC) $(FLAGS) -c main.cc -o main.o $(INCLUDES) $(DEFINES)
+	$(CC) -O2 -g -DNDEBUG f.o main.o $(LINK_LIBRARIES)
+
+clean:
+	rm -f *.o a.out
