@@ -1,3 +1,16 @@
+cgdb 安装
+http://www.voidcn.com/article/p-yzmeyjah-bny.html
+yum install ncurses-devel
+yum install texinfo
+yum install readline-devel
+[root@localhost ~]# wget https://github.com/cgdb/cgdb/archive/v0.7.0.tar.gz
+[root@localhost ~]# tar xf v0.7.0.tar.gz 
+[root@localhost ~]# cd cgdb-0.7.0/
+[root@localhost cgdb-0.7.0]# ./autogen.sh 
+[root@localhost cgdb-0.7.0]# ./configure --prefix=/usr
+[root@localhost cgdb-0.7.0]# make && make install
+
+
 带参数调试：
 cgdb --args ./darknet cfg/yolo.cfg yolo.weights data/dog.jpg
 
