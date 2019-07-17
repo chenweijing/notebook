@@ -1,0 +1,2 @@
+netstat -antup | grep 80
+tcpdump port 22 -c 3 -n
