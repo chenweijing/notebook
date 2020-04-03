@@ -1,0 +1,15 @@
+https://blog.csdn.net/runner668/article/details/80958496
+
+tar -xzf go1.8.linux-amd64.tar.gz  -C /usr/local
+
+/usr/local/go/bin/go version
+
+vim ~/.bashrc
+
+export GOPATH=/opt/go
+export GOROOT=/usr/local/go
+export GOARCH=386
+export GOOS=linux
+export GOBIN=$GOROOT/bin/
+export GOTOOLS=$GOROOT/pkg/tool/
+export PATH=$PATH:$GOBIN:$GOTOOLS
