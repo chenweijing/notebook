@@ -23,3 +23,26 @@ mysql -uroot -p
 
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
+###  可以亲测
+https://blog.csdn.net/pyrans/article/details/82389220
+
+1> vi /etc/mysql/mysql.conf.d/mysqld.cnf   
+将 bind-address = 127.0.0.1 改为: 0.0.0.0
+
+.在连接服务器后,操作mysql系统数据库
+
+             命令为：  mysql -u root -p
+
+                              use mysql；
+
+3. 查询用户表命令：select User,authentication_string,Host from user; (这里也可以看出host默认都是localhost访问权限)
+
+4. 创建可以访问的用户名即密码
+ GRANT ALL PRIVILEGES ON *.* TO '账号'@'%' IDENTIFIED BY '密码';
+
+5.刷新权限:    flush privileges;     
+
+6.重新启动mysql服务
+
+service mysql restart
