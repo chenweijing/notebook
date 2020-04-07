@@ -1,0 +1,25 @@
+Ubuntu 安装MySQL并打开远程连接
+首先使用su命令切换到root账户
+
+在用apt-get install mysql-server命令获取到MySQL的服务
+
+等待下载安装，按照提示输入MySQL的密码
+
+安装完成后对mysqld.cnf 进行编辑，开放远程连接
+
+vi /etc/mysql/mysql.conf.d/mysqld.cnf  
+
+将 bind-address = 127.0.0.1 这行注释掉
+
+重启MySQL   service mysql restart
+
+随后将MySQL用户的远程访问打开 
+
+mysql -uroot -p 
+
+输入密码
+
+运行以下命令，即可远程连接MySQL
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
