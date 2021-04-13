@@ -46,3 +46,7 @@ https://blog.csdn.net/pyrans/article/details/82389220
 6.重新启动mysql服务
 
 service mysql restart
+
+编辑没有密码的问题： https://developer.aliyun.com/article/700472
+ubuntu安装mysql没有让我设置密码
+终端输入： sudo cat /etc/mysql/debian.cnf
