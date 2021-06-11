@@ -1,0 +1,6 @@
+GO111MODULE="on"
+go env -w GOPROXY="https://mirrors.aliyun.com/goproxy/"
+
+go get 不成功
+cd $GOPATH
+unset GOBIN
