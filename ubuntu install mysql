@@ -66,3 +66,28 @@ mysql> grant all privileges on *.* to 'root'@'%' identified by '123456' with gra
 update user set host='%' where user='root' and host='localhost';
 
 
+总结：
+1> 
+sudo apt-get install mysql-server
+sudo apt-get install mysql-client
+
+2> 
+sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+将bind-address = 127.0.0.1注释掉（即在行首加#)
+
+3>
+mysql -uroot -p123456
+use mysql;
+delete from user where user='';
+mysql> grant all privileges on *.* to 'root'@'%' identified by '123456' with grant option;
+
+4> 
+service mysql stop
+service mysql start
+
+
+
+
+
+
+
