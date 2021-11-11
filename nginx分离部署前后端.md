@@ -48,7 +48,7 @@ http {
 
 		#所有请求都会被转发
 		location / {
-			#proxy_pass www.baidu.com;
+			#proxy_pass https://www.baidu.com;
 			proxy_pass http://javabody.org;
 			proxy_redirect default;
 		}
